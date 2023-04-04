@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import argparse
-import library.parse
+from library.parse import parse_file
+from library.parse import ParseType
 
 # --------------------------------------------------------------------------------------------
 
@@ -21,7 +22,8 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    print(args)
+    instructions = parse_file(args.program, ParseType.PROG)
+    functional_units = parse_file(args.configuration, ParseType.CFG)
 
 if __name__ == '__main__':
     main()
