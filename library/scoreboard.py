@@ -143,11 +143,13 @@ class Scoreboard:
 
     def run(self):
         instruction_size = len(self.instructions)
-        instruction_issue = 0
+        instruction_point = 0
         instruction = None
 
-        while(instruction_issue < instruction_size):
-            for i in range(instruction_issue, -1, -1):
+        while(self.instructions[instruction_size - 1]['status'][3] == 0):
+            if(instruction_point >= instruction_size):
+                instruction_point = instruction_size - 1
+            for i in range(instruction_point, -1, -1):
                 instruction = self.instructions[i]
                 
                 info = instruction['info']
@@ -162,7 +164,7 @@ class Scoreboard:
                         instruction['fu_id'] = fu_id
                         status[0] = self.cycle
                         instruction['step'] = Step.READ
-                        instruction_issue = instruction_issue + 1
+                        instruction_point = instruction_point + 1
                 elif(step == Step.READ):
                     if(self.read_regs(info, fu_id)):
                         status[1] = self.cycle
@@ -176,8 +178,6 @@ class Scoreboard:
                         status[3] = self.cycle
                         instruction['step'] = Step.DONE
 
-
-            self.dump_board()
             self.cycle = self.cycle + 1
 
     def dump_board(self):
