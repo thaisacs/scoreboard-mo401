@@ -8,6 +8,7 @@ import numpy as np
 
 class Scoreboard:
     def __init__(self, instructions, functional_units):
+        self.cycle = 1
         self.functional_units = gen_functional_units(functional_units)
         self.instructions = gen_instructions_board(instructions)
         self.register_f = -1*np.ones(20, dtype=np.uint32)
@@ -95,14 +96,24 @@ class Scoreboard:
         elif(info['rd_type'] == 'int'):
             self.register_i[info['rd']] = fu_id
 
-        print(self.functional_units[fu_id]['status'])
-        print(info)
+    def read_regs(self, info, fu_id):
+        if(self.functional_units[fu_id]['status']['rj'] == 'Y' and self.functional_units[fu_id]['status']['rk'] == 'Y'):
+            self.functional_units[fu_id]['status']['rj'] = 'N'
+            self.functional_units[fu_id]['status']['rk'] = 'N'
+            return True
+        return False
+
+    def execute(self, info, fu_id, read_cycle):
+        cycles = self.functional_units[fu_id]['cycles']
+        current_cycle = self.cycle
+        if(current_cycle - read_cycle == cycles):
+            return True
+        return False
 
     def run(self):
         instruction_size = len(self.instructions)
         instruction_issue = 0
         instruction = None
-        cycle = 1
 
         while(instruction_issue < instruction_size):
             for i in range(instruction_issue, -1, -1):
@@ -111,22 +122,30 @@ class Scoreboard:
                 info = instruction['info']
                 status = instruction['status']
                 step = instruction['step']
+                fu_id = instruction['fu_id']
 
                 if(step == Step.ISSUE):
                     fu_id = self.check_fu(info)
                     if(fu_id != NONE_ID and self.check_reg(info)):
                         self.reserve_reg_fu(info, fu_id)
-                        status[0] = cycle
+                        instruction['fu_id'] = fu_id
+                        status[0] = self.cycle
                         instruction['step'] = Step.READ
                         instruction_issue = instruction_issue + 1
                 elif(step == Step.READ):
-                    instruction['step'] = Step.EXECUTE
+                    if(self.read_regs(info, fu_id)):
+                        status[1] = self.cycle
+                        instruction['step'] = Step.EXECUTE
                 elif(step == Step.EXECUTE):
-                    instruction['step'] = Step.WRITE
+                    if(self.execute(info, fu_id, status[1])):
+                        status[2] = self.cycle
+                        instruction['step'] = Step.WRITE
                 elif(step == Step.WRITE):
+                    status[3] = self.cycle
                     instruction['step'] = Step.DONE
-                
-            cycle = cycle + 1
+
+            self.dump_board()
+            self.cycle = self.cycle + 1
 
     def dump_board(self):
         print('ISSUE   -   READ   -   EXECUTE   -   WRITE   ')

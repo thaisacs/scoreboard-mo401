@@ -45,6 +45,7 @@ def gen_instructions_board(configuration):
         status = np.zeros(4, dtype=np.uint32)
         instructions.append({
             'info': i,
+            'fu_id': NONE_ID,
             'status': status,
             'step': Step.ISSUE
         })
