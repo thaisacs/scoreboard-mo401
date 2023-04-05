@@ -25,5 +25,8 @@ def main():
     instructions = parse_file(args.program, ParseType.PROG)
     functional_units = parse_file(args.configuration, ParseType.CFG)
 
+    print(instructions)
+    print(functional_units)
+
 if __name__ == '__main__':
     main()
