@@ -42,11 +42,6 @@ class Scoreboard:
         return NONE_ID
 
     def reserve_reg_fu(self, info, fu_id):
-        if(info['rd_type'] == 'float'):
-            self.register_f[info['rd']] = fu_id
-        elif(info['rd_type'] == 'int'):
-            self.register_i[info['rd']] = fu_id
-
         self.functional_units[fu_id]['status']['busy'] = 'Y'
         if(info['rd_type'] == None):
             self.functional_units[fu_id]['status']['fi'] = '-'
@@ -55,18 +50,50 @@ class Scoreboard:
 
         if(info['rs1_type'] == None):
             self.functional_units[fu_id]['status']['fj'] = '-'
+            self.functional_units[fu_id]['status']['qj'] = '-'
+            self.functional_units[fu_id]['status']['rj'] = 'Y'
         else:
             self.functional_units[fu_id]['status']['fj'] = code_reg(info['rs1'], info['rs1_type'])
+            if(info['rs1_type'] == 'float'):
+                if(self.register_f[info['rs1']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qj'] = '-'
+                    self.functional_units[fu_id]['status']['rj'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qj'] = str(self.register_f[info['rs1']])
+                    self.functional_units[fu_id]['status']['rj'] = 'N'
+            else:
+                if(self.register_i[info['rs1']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qj'] = '-'
+                    self.functional_units[fu_id]['status']['rj'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qj'] = str(self.register_i[info['rs1']])
+                    self.functional_units[fu_id]['status']['rj'] = 'N'
 
         if(info['rs2_type'] == None):
             self.functional_units[fu_id]['status']['fk'] = '-'
+            self.functional_units[fu_id]['status']['qk'] = '-'
+            self.functional_units[fu_id]['status']['rk'] = 'Y'
         else:
             self.functional_units[fu_id]['status']['fk'] = code_reg(info['rs2'], info['rs2_type'])
+            if(info['rs2_type'] == 'float'):
+                if(self.register_f[info['rs2']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qk'] = '-'
+                    self.functional_units[fu_id]['status']['rk'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qk'] = str(self.register_f[info['rs2']])
+                    self.functional_units[fu_id]['status']['rk'] = 'N'
+            else:
+                if(self.register_i[info['rs2']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qk'] = '-'
+                    self.functional_units[fu_id]['status']['rk'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qk'] = str(self.register_i[info['rs2']])
+                    self.functional_units[fu_id]['status']['rk'] = 'N'
 
-        self.functional_units[fu_id]['status']['qj'] = '-'
-        self.functional_units[fu_id]['status']['qk'] = '-'
-        self.functional_units[fu_id]['status']['rj'] = '-'
-        self.functional_units[fu_id]['status']['rk'] = '-'
+        if(info['rd_type'] == 'float'):
+            self.register_f[info['rd']] = fu_id
+        elif(info['rd_type'] == 'int'):
+            self.register_i[info['rd']] = fu_id
 
         print(self.functional_units[fu_id]['status'])
         print(info)
