@@ -1,80 +1,94 @@
 from library.util import Step
 from library.util import gen_instructions_board
 from library.util import gen_functional_units
+from library.util import code_reg, decode_reg
+from library.util import NONE_ID
 from enum import Enum
 import numpy as np
 
 class Scoreboard:
     def __init__(self, instructions, functional_units):
-        functional_units = gen_functional_units(functional_units)
-        instructions = gen_instructions_board(instructions)
-        self.status = {
-            'register_f': np.zeros(20, dtype=np.uint32),
-            'register_i': np.zeros(20, dtype=np.uint32),
-            'functional_units': functional_units,
-            'instructions': instructions,
-            'mapping': []
-        }
+        self.functional_units = gen_functional_units(functional_units)
+        self.instructions = gen_instructions_board(instructions)
+        self.register_f = -1*np.ones(20, dtype=np.uint32)
+        self.register_i = -1*np.ones(20, dtype=np.uint32)
 
     def check_reg(self, info):
-        #print(self.status['register_i'])
-        #print(self.status['register_f'])
-        #for i in self.status['functional_units']:
-        #    print(i)
-        #for i in self.status['instructions']:
-        #    print(i)
-
-        print(info)
         if(info['rd_type'] == 'float'):
-            if(self.status['register_f'][info['rd']] == 0):
+            if(self.register_f[info['rd']] == NONE_ID):
                 return True
         elif(info['rd_type'] == 'int'):
-            if(self.status['register_i'][info['rd']] == 0):
+            if(self.register_i[info['rd']] == NONE_ID):
                 return True
         elif(info['rd_type'] == None):
             return True
         return False
 
     def check_fu(self, info):
-        fus = self.status['functional_units']
+        fus = self.functional_units
         op = info['opcode']
-        for fu in fus:
+        for fu_id in range(len(fus)):
+            fu = fus[fu_id]
             name = fu['name']
-            if(fu['status'][0] == 0):
+            if(fu['status']['busy'] == '-'):
                 if((op == 0 or op == 1) and name == 'int'):
-                    return True
+                    return fu_id
                 elif((op == 2 or op == 3) and name == 'add'):
-                    return True
+                    return fu_id
                 elif(op == 4 and name == 'mult'):
-                    return True
+                    return fu_id
                 elif(op == 5 and name == 'div'):
-                    return True
-        return False
+                    return fu_id
+        return NONE_ID
 
-    def get_reg(self, info):
-        return
+    def reserve_reg_fu(self, info, fu_id):
+        if(info['rd_type'] == 'float'):
+            self.register_f[info['rd']] = fu_id
+        elif(info['rd_type'] == 'int'):
+            self.register_i[info['rd']] = fu_id
 
-    def get_fu(self, info):
-        return
+        self.functional_units[fu_id]['status']['busy'] = 'Y'
+        if(info['rd_type'] == None):
+            self.functional_units[fu_id]['status']['fi'] = '-'
+        else:
+            self.functional_units[fu_id]['status']['fi'] = code_reg(info['rd'], info['rd_type'])
+
+        if(info['rs1_type'] == None):
+            self.functional_units[fu_id]['status']['fj'] = '-'
+        else:
+            self.functional_units[fu_id]['status']['fj'] = code_reg(info['rs1'], info['rs1_type'])
+
+        if(info['rs2_type'] == None):
+            self.functional_units[fu_id]['status']['fk'] = '-'
+        else:
+            self.functional_units[fu_id]['status']['fk'] = code_reg(info['rs2'], info['rs2_type'])
+
+        self.functional_units[fu_id]['status']['qj'] = '-'
+        self.functional_units[fu_id]['status']['qk'] = '-'
+        self.functional_units[fu_id]['status']['rj'] = '-'
+        self.functional_units[fu_id]['status']['rk'] = '-'
+
+        print(self.functional_units[fu_id]['status'])
+        print(info)
 
     def run(self):
-        instruction_size = len(self.status['instructions'])
+        instruction_size = len(self.instructions)
         instruction_issue = 0
         instruction = None
         cycle = 1
 
         while(instruction_issue < instruction_size):
             for i in range(instruction_issue, -1, -1):
-                instruction = self.status['instructions'][i]
-
+                instruction = self.instructions[i]
+                
                 info = instruction['info']
                 status = instruction['status']
                 step = instruction['step']
 
                 if(step == Step.ISSUE):
-                    if(self.check_fu(info) and self.check_reg(info)):
-                        #self.get_fu(info)
-                        #self.get_reg(info)
+                    fu_id = self.check_fu(info)
+                    if(fu_id != NONE_ID and self.check_reg(info)):
+                        self.reserve_reg_fu(info, fu_id)
                         status[0] = cycle
                         instruction['step'] = Step.READ
                         instruction_issue = instruction_issue + 1
@@ -88,11 +102,8 @@ class Scoreboard:
             cycle = cycle + 1
 
     def dump_board(self):
-        instructions = self.status['instructions']
-        
         print('ISSUE   -   READ   -   EXECUTE   -   WRITE   ')
-
-        for i in instructions:
+        for i in self.instructions:
             status = i['status']
             print(status)
 

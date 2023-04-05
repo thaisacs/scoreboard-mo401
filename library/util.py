@@ -10,6 +10,7 @@ import numpy as np
 #fsub (usa somador de ponto flutuante)
 #fmul (usa multiplicador de ponto flutuante)
 #fdiv (usa divisor de ponto flutuante).
+NONE_ID = -1
 
 # Define opcode constants
 OPCODES = {
@@ -56,7 +57,16 @@ def gen_functional_units(configuration):
             name = fu['name']
             identifier = i+1
             cycles = fu['cycles']
-            status = np.zeros(9, dtype=np.uint32)
+            status = {
+                'busy': '-',
+                'fi': '-',
+                'fj': '-',
+                'fk': '-',
+                'qj': '-',
+                'qk': '-',
+                'rj': '-',
+                'rk': '-',
+            }
             functional_units.append({
                 'name': name,
                 'id': identifier,
@@ -65,3 +75,11 @@ def gen_functional_units(configuration):
             })
     return functional_units
 
+def decode_reg(register):
+    rd = int(register[1:])
+    rd_type = REG_PREFIXES[register[1][0].lower()]
+
+def code_reg(reg_number, reg_type):
+    if(reg_type == 'int'):
+        return 'x' + str(reg_number)
+    return reg_type[0] + str(reg_number)
