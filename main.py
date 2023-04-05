@@ -3,6 +3,7 @@
 import argparse
 from library.parse import parse_file
 from library.parse import ParseType
+from library.scoreboard import Scoreboard
 
 # --------------------------------------------------------------------------------------------
 
@@ -24,9 +25,8 @@ def main():
     args = parser.parse_args()
     instructions = parse_file(args.program, ParseType.PROG)
     functional_units = parse_file(args.configuration, ParseType.CFG)
-
-    print(instructions)
-    print(functional_units)
+    s = Scoreboard(instructions, functional_units)
+    s.run()
 
 if __name__ == '__main__':
     main()
