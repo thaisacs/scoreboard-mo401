@@ -6,8 +6,6 @@ from library.util import NONE_ID
 from enum import Enum
 import numpy as np
 
-import sys
-
 class Scoreboard:
     def __init__(self, instructions, functional_units):
         self.cycle = 1
