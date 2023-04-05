@@ -1,27 +1,8 @@
 from enum import Enum
+from library.util import ParseType
+from library.util import OPCODES
+from library.util import REG_PREFIXES
 import sys
-
-# --------------------------------------------------------------------------------------------
-
-# Define opcode constants
-OPCODES = {
-    'fld': 0,
-    'fsd': 1,
-    'fadd': 2,
-    'fsub': 3,
-    'fmul': 4,
-    'fdiv': 5
-}
-
-# Define register prefix constants
-REG_PREFIXES = {
-    'x': 'int',
-    'f': 'float'
-}
-
-class ParseType(Enum):
-    PROG = 1
-    CFG = 2
 
 # --------------------------------------------------------------------------------------------
 
