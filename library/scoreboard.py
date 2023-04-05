@@ -6,6 +6,8 @@ from library.util import NONE_ID
 from enum import Enum
 import numpy as np
 
+import sys
+
 class Scoreboard:
     def __init__(self, instructions, functional_units):
         self.cycle = 1
@@ -111,6 +113,16 @@ class Scoreboard:
         return False
 
     def write(self, info, fu_id):
+        
+        if(info['rd_type'] != None):
+            register = code_reg(info['rd'], info['rd_type'])
+
+            for f in self.functional_units:
+                if(f['status']['fj'] == register and f['status']['rj'] == 'Y'):
+                    return False
+                if(f['status']['fk'] == register and f['status']['rk'] == 'Y'):
+                    return False
+
         if(info['rd_type'] == 'float'):
             if(self.register_f[info['rd']] == fu_id):
                 self.register_f[info['rd']] = NONE_ID
@@ -178,8 +190,8 @@ class Scoreboard:
 
             self.cycle = self.cycle + 1
 
-    def dump_board(self):
-        print('ISSUE   -   READ   -   EXECUTE   -   WRITE   ')
+    def dump_board(self, instructions):
+        print('[ISSUE READ EXECUTE WRITE]')
         for i in self.instructions:
             status = i['status']
             print(status)

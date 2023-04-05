@@ -27,7 +27,7 @@ def main():
     functional_units = parse_file(args.configuration, ParseType.CFG)
     s = Scoreboard(instructions, functional_units)
     s.run()
-    s.dump_board()
+    s.dump_board(instructions)
 
 if __name__ == '__main__':
     main()
