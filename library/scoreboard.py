@@ -6,6 +6,8 @@ from library.util import NONE_ID
 from enum import Enum
 import numpy as np
 
+import sys
+
 class Scoreboard:
     def __init__(self, instructions, functional_units):
         self.cycle = 1
@@ -60,14 +62,14 @@ class Scoreboard:
                     self.functional_units[fu_id]['status']['qj'] = '-'
                     self.functional_units[fu_id]['status']['rj'] = 'Y'
                 else:
-                    self.functional_units[fu_id]['status']['qj'] = str(self.register_f[info['rs1']])
+                    self.functional_units[fu_id]['status']['qj'] = self.register_f[info['rs1']]
                     self.functional_units[fu_id]['status']['rj'] = 'N'
             else:
                 if(self.register_i[info['rs1']] == NONE_ID):
                     self.functional_units[fu_id]['status']['qj'] = '-'
                     self.functional_units[fu_id]['status']['rj'] = 'Y'
                 else:
-                    self.functional_units[fu_id]['status']['qj'] = str(self.register_i[info['rs1']])
+                    self.functional_units[fu_id]['status']['qj'] = self.register_i[info['rs1']]
                     self.functional_units[fu_id]['status']['rj'] = 'N'
 
         if(info['rs2_type'] == None):
@@ -81,14 +83,14 @@ class Scoreboard:
                     self.functional_units[fu_id]['status']['qk'] = '-'
                     self.functional_units[fu_id]['status']['rk'] = 'Y'
                 else:
-                    self.functional_units[fu_id]['status']['qk'] = str(self.register_f[info['rs2']])
+                    self.functional_units[fu_id]['status']['qk'] = self.register_f[info['rs2']]
                     self.functional_units[fu_id]['status']['rk'] = 'N'
             else:
                 if(self.register_i[info['rs2']] == NONE_ID):
                     self.functional_units[fu_id]['status']['qk'] = '-'
                     self.functional_units[fu_id]['status']['rk'] = 'Y'
                 else:
-                    self.functional_units[fu_id]['status']['qk'] = str(self.register_i[info['rs2']])
+                    self.functional_units[fu_id]['status']['qk'] = self.register_i[info['rs2']]
                     self.functional_units[fu_id]['status']['rk'] = 'N'
 
         if(info['rd_type'] == 'float'):
@@ -109,6 +111,35 @@ class Scoreboard:
         if(current_cycle - read_cycle == cycles):
             return True
         return False
+
+    def write(self, info, fu_id):
+        if(info['rd_type'] == 'float'):
+            if(self.register_f[info['rd']] == fu_id):
+                self.register_f[info['rd']] = NONE_ID
+        elif(info['rd_type'] == 'int'):
+            if(self.register_i[info['rd']] == fu_id):
+                self.register_f[info['rd']] = NONE_ID
+
+        self.functional_units[fu_id]['status']['busy'] = '-'
+        self.functional_units[fu_id]['status']['fi'] = '-'
+        self.functional_units[fu_id]['status']['fj'] = '-'
+        self.functional_units[fu_id]['status']['fk'] = '-'
+        self.functional_units[fu_id]['status']['qj'] = '-'
+        self.functional_units[fu_id]['status']['rk'] = '-'
+        self.functional_units[fu_id]['status']['rj'] = '-'
+        self.functional_units[fu_id]['status']['rk'] = '-'
+
+        for fid in range(len(self.functional_units)):
+            if(type(self.functional_units[fid]['status']['qj']) == np.int64):
+                if(self.functional_units[fid]['status']['qj'] == fu_id):
+                    self.functional_units[fid]['status']['qj'] = '-'
+                    self.functional_units[fid]['status']['rj'] = 'Y'
+            if(type(self.functional_units[fid]['status']['qk']) == np.int64):
+                if(self.functional_units[fid]['status']['qk'] == fu_id):
+                    self.functional_units[fid]['status']['qk'] = '-'
+                    self.functional_units[fid]['status']['rk'] = 'Y'
+
+        return True
 
     def run(self):
         instruction_size = len(self.instructions)
@@ -141,8 +172,10 @@ class Scoreboard:
                         status[2] = self.cycle
                         instruction['step'] = Step.WRITE
                 elif(step == Step.WRITE):
-                    status[3] = self.cycle
-                    instruction['step'] = Step.DONE
+                    if(self.write(info, fu_id)):
+                        status[3] = self.cycle
+                        instruction['step'] = Step.DONE
+
 
             self.dump_board()
             self.cycle = self.cycle + 1
