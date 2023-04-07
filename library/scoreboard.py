@@ -46,6 +46,7 @@ class Scoreboard:
 
     def reserve_reg_fu(self, info, fu_id):
         self.functional_units[fu_id]['status']['busy'] = 'Y'
+
         if(info['rd_type'] == None):
             self.functional_units[fu_id]['status']['fi'] = '-'
         else:
@@ -165,6 +166,7 @@ class Scoreboard:
         while(not self.done()):
             if(instruction_point >= instruction_size):
                 instruction_point = instruction_size - 1
+
             for i in range(instruction_point, -1, -1):
                 instruction = self.instructions[i]
                 
