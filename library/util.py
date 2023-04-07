@@ -13,6 +13,8 @@ import sys
 #fdiv (usa divisor de ponto flutuante).
 NONE_ID = -1
 
+PIPELINE_DEPTH = 4
+
 # Define opcode constants
 OPCODES = {
     'fld': 0,
@@ -43,7 +45,7 @@ class Step(Enum):
 def gen_instructions_board(configuration):
     instructions = []
     for i in configuration:
-        status = np.zeros(4, dtype=np.uint32)
+        status = np.zeros(PIPELINE_DEPTH, dtype=np.uint32)
         instructions.append({
             'info': i,
             'fu_id': NONE_ID,
