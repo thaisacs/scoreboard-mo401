@@ -196,9 +196,18 @@ class Scoreboard:
 
             self.cycle = self.cycle + 1
 
-    def dump_board(self, instructions):
+    def dump_board(self, instructions, program):
+        f = open(program, 'r')
+        k = 0
+        program_lines = []
+
+        for line in f:
+            program_lines.append(line.replace('\n', ''))
+
         print('[ISSUE READ EXECUTE WRITE]')
+
         for i in self.instructions:
             status = i['status']
-            print(status)
+            print(f"{program_lines[k]} {status}")
+            k = k + 1
 
