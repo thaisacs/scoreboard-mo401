@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from library.util import Step
 from library.util import gen_instructions_board
 from library.util import gen_functional_units
