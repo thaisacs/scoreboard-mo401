@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
-from library.util import parse_file
+import library.util as util
 from library.util import ParseType
 from library.scoreboard import Scoreboard
 
@@ -23,8 +23,8 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    instructions = parse_file(args.program, ParseType.PROG)
-    functional_units = parse_file(args.configuration, ParseType.CFG)
+    instructions = util.parse_file(args.program, ParseType.PROG)
+    functional_units = util.parse_file(args.configuration, ParseType.CFG)
     s = Scoreboard(instructions, functional_units)
     s.run()
     s.dump_board(instructions, args.program)
