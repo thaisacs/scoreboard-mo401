@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import argparse
-from library.parse import parse_file
-from library.parse import ParseType
+from library.util import parse_file
+from library.util import ParseType
 from library.scoreboard import Scoreboard
 
 # --------------------------------------------------------------------------------------------

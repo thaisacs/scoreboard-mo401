@@ -151,12 +151,18 @@ class Scoreboard:
 
         return True
 
+    def done(self):
+        for i in self.instructions:
+            if(i['step'] != Step.DONE):
+                return False
+        return True
+
     def run(self):
         instruction_size = len(self.instructions)
         instruction_point = 0
         instruction = None
 
-        while(self.instructions[instruction_size - 1]['status'][3] == 0):
+        while(not self.done()):
             if(instruction_point >= instruction_size):
                 instruction_point = instruction_size - 1
             for i in range(instruction_point, -1, -1):
