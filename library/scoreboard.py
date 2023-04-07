@@ -17,6 +17,7 @@ class Scoreboard:
         self.register_i = -1*np.ones(32, dtype=np.uint32)
 
     def check_reg(self, info):
+        # check if the write register is free
         if(info['rd_type'] == 'float'):
             if(self.register_f[info['rd']] == NONE_ID):
                 return True
@@ -28,6 +29,7 @@ class Scoreboard:
         return False
 
     def check_fu(self, info):
+        # check if there is a functional unit
         fus = self.functional_units
         op = info['opcode']
         for fu_id in range(len(fus)):
@@ -44,56 +46,44 @@ class Scoreboard:
                     return fu_id
         return NONE_ID
 
+    def set_fqr(self, info, fu_id, register_id, register_name):
+        if(info[register_id+'_type'] == None):
+            self.functional_units[fu_id]['status']['f'+register_name] = '-'
+            self.functional_units[fu_id]['status']['q'+register_name] = '-'
+            self.functional_units[fu_id]['status']['r'+register_name] = 'Y'
+        else:
+            self.functional_units[fu_id]['status']['f'+register_name] = code_reg(info[register_id], info[register_id+'_type'])
+            if(info[register_id+'_type'] == 'float'):
+                if(self.register_f[info[register_id]] == NONE_ID):
+                    self.functional_units[fu_id]['status']['q'+register_name] = '-'
+                    self.functional_units[fu_id]['status']['r'+register_name] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['q'+register_name] = self.register_f[info[register_id]]
+                    self.functional_units[fu_id]['status']['r'+register_name] = 'N'
+            else:
+                if(self.register_i[info[register_id]] == NONE_ID):
+                    self.functional_units[fu_id]['status']['q'+register_name] = '-'
+                    self.functional_units[fu_id]['status']['r'+register_name] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['q'+register_name] = self.register_i[info[register_id]]
+                    self.functional_units[fu_id]['status']['r'+register_name] = 'N'
+
+
     def reserve_reg_fu(self, info, fu_id):
+        # reserve functional unit
         self.functional_units[fu_id]['status']['busy'] = 'Y'
 
+        # set rd in functional unit
         if(info['rd_type'] == None):
             self.functional_units[fu_id]['status']['fi'] = '-'
         else:
             self.functional_units[fu_id]['status']['fi'] = code_reg(info['rd'], info['rd_type'])
 
-        if(info['rs1_type'] == None):
-            self.functional_units[fu_id]['status']['fj'] = '-'
-            self.functional_units[fu_id]['status']['qj'] = '-'
-            self.functional_units[fu_id]['status']['rj'] = 'Y'
-        else:
-            self.functional_units[fu_id]['status']['fj'] = code_reg(info['rs1'], info['rs1_type'])
-            if(info['rs1_type'] == 'float'):
-                if(self.register_f[info['rs1']] == NONE_ID):
-                    self.functional_units[fu_id]['status']['qj'] = '-'
-                    self.functional_units[fu_id]['status']['rj'] = 'Y'
-                else:
-                    self.functional_units[fu_id]['status']['qj'] = self.register_f[info['rs1']]
-                    self.functional_units[fu_id]['status']['rj'] = 'N'
-            else:
-                if(self.register_i[info['rs1']] == NONE_ID):
-                    self.functional_units[fu_id]['status']['qj'] = '-'
-                    self.functional_units[fu_id]['status']['rj'] = 'Y'
-                else:
-                    self.functional_units[fu_id]['status']['qj'] = self.register_i[info['rs1']]
-                    self.functional_units[fu_id]['status']['rj'] = 'N'
+        # set rs1 and rs2 in functional unit
+        self.set_fqr(info, fu_id, 'rs1', 'j')
+        self.set_fqr(info, fu_id, 'rs2', 'k')
 
-        if(info['rs2_type'] == None):
-            self.functional_units[fu_id]['status']['fk'] = '-'
-            self.functional_units[fu_id]['status']['qk'] = '-'
-            self.functional_units[fu_id]['status']['rk'] = 'Y'
-        else:
-            self.functional_units[fu_id]['status']['fk'] = code_reg(info['rs2'], info['rs2_type'])
-            if(info['rs2_type'] == 'float'):
-                if(self.register_f[info['rs2']] == NONE_ID):
-                    self.functional_units[fu_id]['status']['qk'] = '-'
-                    self.functional_units[fu_id]['status']['rk'] = 'Y'
-                else:
-                    self.functional_units[fu_id]['status']['qk'] = self.register_f[info['rs2']]
-                    self.functional_units[fu_id]['status']['rk'] = 'N'
-            else:
-                if(self.register_i[info['rs2']] == NONE_ID):
-                    self.functional_units[fu_id]['status']['qk'] = '-'
-                    self.functional_units[fu_id]['status']['rk'] = 'Y'
-                else:
-                    self.functional_units[fu_id]['status']['qk'] = self.register_i[info['rs2']]
-                    self.functional_units[fu_id]['status']['rk'] = 'N'
-
+        # reserve destination register
         if(info['rd_type'] == 'float'):
             self.register_f[info['rd']] = fu_id
         elif(info['rd_type'] == 'int'):
@@ -113,8 +103,8 @@ class Scoreboard:
             return True
         return False
 
-    def write(self, info, fu_id):
-        
+    def check_write(self, info, fu_id):
+        # check if the instruction can write 
         if(info['rd_type'] != None):
             register = code_reg(info['rd'], info['rd_type'])
 
@@ -123,7 +113,10 @@ class Scoreboard:
                     return False
                 if(f['status']['fk'] == register and f['status']['rk'] == 'Y'):
                     return False
+        return True
 
+    def write(self, info, fu_id):
+        # set register
         if(info['rd_type'] == 'float'):
             if(self.register_f[info['rd']] == fu_id):
                 self.register_f[info['rd']] = NONE_ID
@@ -131,6 +124,7 @@ class Scoreboard:
             if(self.register_i[info['rd']] == fu_id):
                 self.register_i[info['rd']] = NONE_ID
 
+        # clean functional unit
         self.functional_units[fu_id]['status']['busy'] = '-'
         self.functional_units[fu_id]['status']['fi'] = '-'
         self.functional_units[fu_id]['status']['fj'] = '-'
@@ -140,6 +134,7 @@ class Scoreboard:
         self.functional_units[fu_id]['status']['rj'] = '-'
         self.functional_units[fu_id]['status']['rk'] = '-'
 
+        # check the others functional units
         for fid in range(len(self.functional_units)):
             if(type(self.functional_units[fid]['status']['qj']) == np.int64):
                 if(self.functional_units[fid]['status']['qj'] == fu_id):
@@ -149,8 +144,6 @@ class Scoreboard:
                 if(self.functional_units[fid]['status']['qk'] == fu_id):
                     self.functional_units[fid]['status']['qk'] = '-'
                     self.functional_units[fid]['status']['rk'] = 'Y'
-
-        return True
 
     def done(self):
         for i in self.instructions:
@@ -192,7 +185,8 @@ class Scoreboard:
                         status[2] = self.cycle
                         instruction['step'] = Step.WRITE
                 elif(step == Step.WRITE):
-                    if(self.write(info, fu_id)):
+                    if(self.check_write(info, fu_id)):
+                        self.write(info, fu_id)
                         status[3] = self.cycle
                         instruction['step'] = Step.DONE
 

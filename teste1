@@ -1,0 +1,20 @@
+        if(info['rs2_type'] == None):
+            self.functional_units[fu_id]['status']['fk'] = '-'
+            self.functional_units[fu_id]['status']['qk'] = '-'
+            self.functional_units[fu_id]['status']['rk'] = 'Y'
+        else:
+            self.functional_units[fu_id]['status']['fk'] = code_reg(info['rs2'], info['rs2_type'])
+            if(info['rs2_type'] == 'float'):
+                if(self.register_f[info['rs2']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qk'] = '-'
+                    self.functional_units[fu_id]['status']['rk'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qk'] = self.register_f[info['rs2']]
+                    self.functional_units[fu_id]['status']['rk'] = 'N'
+            else:
+                if(self.register_i[info['rs2']] == NONE_ID):
+                    self.functional_units[fu_id]['status']['qk'] = '-'
+                    self.functional_units[fu_id]['status']['rk'] = 'Y'
+                else:
+                    self.functional_units[fu_id]['status']['qk'] = self.register_i[info['rs2']]
+                    self.functional_units[fu_id]['status']['rk'] = 'N'
