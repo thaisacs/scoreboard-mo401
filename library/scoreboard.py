@@ -128,7 +128,7 @@ class Scoreboard:
                 self.register_f[info['rd']] = NONE_ID
         elif(info['rd_type'] == 'int'):
             if(self.register_i[info['rd']] == fu_id):
-                self.register_f[info['rd']] = NONE_ID
+                self.register_i[info['rd']] = NONE_ID
 
         self.functional_units[fu_id]['status']['busy'] = '-'
         self.functional_units[fu_id]['status']['fi'] = '-'
