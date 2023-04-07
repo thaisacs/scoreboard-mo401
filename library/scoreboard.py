@@ -15,8 +15,8 @@ class Scoreboard:
         self.cycle = 1
         self.functional_units = gen_functional_units(functional_units)
         self.instructions = gen_instructions_board(instructions)
-        self.register_f = -1*np.ones(32, dtype=np.uint32)
-        self.register_i = -1*np.ones(32, dtype=np.uint32)
+        self.register_f = NONE_ID*np.ones(32, dtype=np.uint32)
+        self.register_i = NONE_ID*np.ones(32, dtype=np.uint32)
 
     def check_reg(self, info):
         # check if the write register is free
