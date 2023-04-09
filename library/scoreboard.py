@@ -202,7 +202,7 @@ class Scoreboard:
         for line in f:
             program_lines.append(line.replace('\n', ''))
 
-        print('[ISSUE READ EXECUTE WRITE]')
+        print('instruction [ISSUE READ EXECUTE WRITE]')
 
         for i in self.instructions:
             status = i['status']
