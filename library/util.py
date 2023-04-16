@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 from enum import Enum
 import numpy as np
 import sys
