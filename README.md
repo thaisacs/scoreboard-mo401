@@ -20,7 +20,7 @@ Onde arquivos ".s" são nomeados com "example" + número do caso de teste + ".s"
 
 ### Uso 
 
-Para implementar este simulador, eu utilizei Python 3.9.2 e WSL 2 com Debian.
+Para implementar este simulador, utilizou-se Python 3.9.2 e WSL 2 com Debian.
 Um exemplo de utilização do simulador considerando o caso de teste 10 seria o seguinte comando.
 
 ```
