@@ -7,7 +7,6 @@
 |___/\___\___/|_|  \___|_.__/ \___/ \__,_|_|  \__,_|
 
                                  by: thais camacho
-
 ```
 
 Este é um simulador de execução fora de ordem com a técnica de scoreboarding, desenvolvido na disciplina [MO401](https://github.com/lfwanner/scoreboard-mo401).
