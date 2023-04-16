@@ -17,7 +17,7 @@ Um exemplo de utilização do simulador considerando o caso de teste 10 seria o 
 python3 main.py -p inputs/example10.s -c inputs/cfg10.in
 ```
 
-Ademais, é possível verificar detalhes da configuração de execução utilizando o seguinte comando
+Ademais, é possível verificar detalhes da configuração de execução utilizando o seguinte comando.
 
 ```
 python3 main.py -h
