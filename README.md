@@ -6,7 +6,7 @@ Este é um simulador de execução fora de ordem com a técnica de scoreboarding
 
 Os casos de testes foram armazenados na pasta inputs/, onde é possível observar que todos os casos possuem dois arquivos: arquivo.s e arquivo.in.
 
-Onde arquivo.s são nomeados com "example" + número do caso de teste + ".s". Além disso, arquivo.in são nomeados com "cfg" + número do caso de teste + ".in".
+Onde arquivos ".s" são nomeados com "example" + número do caso de teste + ".s". Além disso, arquivos ".in" são nomeados com "cfg" + número do caso de teste + ".in".
 
 ### Uso 
 
