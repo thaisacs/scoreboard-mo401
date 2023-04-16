@@ -10,14 +10,15 @@ Onde arquivos ".s" são nomeados com "example" + número do caso de teste + ".s"
 
 ### Uso 
 
+Para implementar este simulador, eu utilizei Python 3.9.2 e WSL 2 com Debian.
 Um exemplo de utilização do simulador considerando o caso de teste 10 seria o seguinte comando.
 
 ```
-python main.py -p inputs/example10.s -c inputs/cfg10.in
+python3 main.py -p inputs/example10.s -c inputs/cfg10.in
 ```
 
 Ademais, é possível verificar detalhes da configuração de execução utilizando o seguinte comando
 
 ```
-python main.py -h
+python3 main.py -h
 ```
