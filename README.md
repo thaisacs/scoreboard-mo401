@@ -1,6 +1,6 @@
 # scoreboard-mo401
 
-Este é um simulador de execução fora de ordem com a técnica de scoreboarding, desenvolvimento na disciplina MO401.
+Este é um simulador de execução fora de ordem com a técnica de scoreboarding, desenvolvido na disciplina MO401.
 
 ### Entradas
 
