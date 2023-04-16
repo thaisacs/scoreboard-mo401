@@ -26,6 +26,7 @@ def main():
     instructions = util.parse_file(args.program, ParseType.PROG)
     functional_units = util.parse_file(args.configuration, ParseType.CFG)
     s = Scoreboard(instructions, functional_units)
+    s.dump_head(args.program, args.configuration)
     s.run()
     s.dump_board(instructions, args.program)
 

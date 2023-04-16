@@ -209,3 +209,17 @@ class Scoreboard:
             print(f"{program_lines[k]} {status}")
             k = k + 1
 
+    def dump_head(self, program, config):
+        print("                        _                         _ ")
+        print("                       | |                       | |")
+        print(" ___  ___ ___  _ __ ___| |__   ___   __ _ _ __ __| |")
+        print("/ __|/ __/ _ \| '__/ _ \ '_ \ / _ \ / _` | '__/ _` |")
+        print("\__ \ (_| (_) | | |  __/ |_) | (_) | (_| | | | (_| |")
+        print("|___/\___\___/|_|  \___|_.__/ \___/ \__,_|_|  \__,_|")
+        print("____________________________________________________")
+        print("")
+        print("      program file: ", program)
+        print("configuration file: ", config)
+        print("")
+        print("                                 by: thais camacho  ")
+        print("____________________________________________________")
