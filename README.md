@@ -1,4 +1,14 @@
-# scoreboard-mo401
+```
+                        _                         _
+                       | |                       | |
+ ___  ___ ___  _ __ ___| |__   ___   __ _ _ __ __| |
+/ __|/ __/ _ \| '__/ _ \ '_ \ / _ \ / _` | '__/ _` |
+\__ \ (_| (_) | | |  __/ |_) | (_) | (_| | | | (_| |
+|___/\___\___/|_|  \___|_.__/ \___/ \__,_|_|  \__,_|
+
+                                 by: thais camacho
+____________________________________________________
+```
 
 Este é um simulador de execução fora de ordem com a técnica de scoreboarding, desenvolvido na disciplina [MO401](https://github.com/lfwanner/scoreboard-mo401).
 
