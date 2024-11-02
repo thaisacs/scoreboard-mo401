@@ -10,7 +10,7 @@
                                  
 ```
 
-Este é um simulador de execução fora de ordem com a técnica de scoreboarding, desenvolvido na disciplina [MO401](https://github.com/lfwanner/scoreboard-mo401).
+Este é um simulador de execução fora de ordem com a técnica de scoreboarding, que por sua vez, foi desenvolvido na disciplina [MO401](https://github.com/lfwanner/scoreboard-mo401).
 
 ## Entradas
 
